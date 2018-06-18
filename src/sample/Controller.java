@@ -31,9 +31,6 @@ public class Controller {
 
     public void handleMove(MouseEvent mouseEvent) {
         clearTemporaryDraw();
-        if (selectedEntity == NONE) {
-            return;
-        }
 
         int x = BoardInfo.getX(mouseEvent.getX());
         int y = BoardInfo.getY(mouseEvent.getY());
@@ -41,11 +38,12 @@ public class Controller {
         temporaryDrawEntity(x, y);
     }
 
+    public void handleDrag(MouseEvent mouseEvent) {
+        handleClick(mouseEvent);
+    }
+
     public void handleClick(MouseEvent mouseEvent) {
         clearTemporaryDraw();
-        if (selectedEntity == NONE) {
-            return;
-        }
 
         int x = BoardInfo.getX(mouseEvent.getX());
         int y = BoardInfo.getY(mouseEvent.getY());
@@ -80,7 +78,6 @@ public class Controller {
 
     private void addEntityToBoard(int x, int y) {
         gameboard[x][y] = selectedEntity;
-        selectedEntity = NONE;
     }
 
     private void redrawEntity(int x, int y) {
@@ -128,6 +125,10 @@ public class Controller {
         selectedEntity = FINISH;
     }
 
+    public void noneAction(ActionEvent actionEvent) {
+        selectedEntity = NONE;
+    }
+
     public void exportLevelAction(ActionEvent actionEvent) {
         try {
             FileWriter fw = new FileWriter("exportedLevel.txt");
@@ -137,7 +138,9 @@ public class Controller {
                 for (int x = 0; x < BoardInfo.horizontalCells; x++) {
                     bw.write(gameboard[x][y].getCode());
                 }
-                bw.newLine();
+                if (y != BoardInfo.verticalCells - 1) {
+                    bw.newLine();
+                }
             }
             bw.flush();
             fw.flush();
